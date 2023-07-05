@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   chalk:
-    specifier: ^5.2.0
-    version: 5.2.0
+    specifier: 4.0.0
+    version: 4.0.0
   commander:
     specifier: ^11.0.0
     version: 11.0.0
@@ -172,6 +172,14 @@ packages:
       isurl: 1.0.0
       tunnel-agent: 0.6.0
       url-to-options: 1.0.1
+    dev: false
+
+  /chalk@4.0.0:
+    resolution: {integrity: sha512-N9oWFcegS0sFr9oh1oz2d7Npos6vNoWW9HvtCg5N1KRFpUhaAhvTv5Y58g880fZaEYSNm3qDz8SU1UrGvp+n7A==}
+    engines: {node: '>=10'}
+    dependencies:
+      ansi-styles: 4.3.0
+      supports-color: 7.2.0
     dev: false
 
   /chalk@4.1.2:
