@@ -1,22 +1,50 @@
-#!/usr/bin/env node
+#! /usr/bin/env node
 
-const chalk = require('chalk')
+const package = require('../package.json')
 const { program } = require('commander')
-const createProject = require('../lib/create')
-
-// 设置首行提示
-program.name('training').usage('<command> [option]')
+const chalk = require('chalk')
+// const createProject = require('../lib/create')
+const inquirer = require('inquirer')
+let prompt = inquirer.createPromptModule()
+const templates = require('../lib/templates')
+const path = require('path')
+const downloadGitRepo = require('download-git-repo')
+const ora = require('ora')
 
 // 获取版本号
-program.version(`training-cli ${require('../package.json').version}`)
+program.version(`training-cli ${package.version}`)
+// 配置首行提示
+program.name('training-cli').usage('<command> [option]')
 
 // 配置create命令
 program
   .command('create <project-name>')
   .description('create a new project')
-  .option('-f, --force', 'overwrite target directory if it exists')
-  .action((projectName, cmd) => {
-    createProject(projectName, cmd)
+  .option('-f --force', 'overwrite target directory if it exists')
+  .action(async projectName => {
+    // createProject(projectName, options)
+
+    const { template } = await prompt([
+      {
+        name: 'template',
+        type: 'list',
+        choices: templates
+      }
+    ])
+    console.log('template: ', template)
+
+    let loading = ora('downloading...')
+    loading.start()
+    // 获取目标文件夹
+    const dest = path.join(process.cwd(), projectName)
+    // 下载模板
+    downloadGitRepo(template, dest, err => {
+      if (err) {
+        loading.fail('create template failed: ' + err.message)
+      } else {
+        loading.succeed('create template successed')
+      }
+    })
   })
 
 // 配置config命令
@@ -26,12 +54,13 @@ program
   .option('-g, --get <key>', 'get value by key')
   .option('-s, --set <key> <value>', 'set option[key] is value')
   .option('-d, --delete <key>', 'delete option by key')
-  .action((value, keys) => {
-    console.log(value, keys)
+  .action((value, key) => {
+    console.log(value, key)
   })
 
-// on监听help指令
-program.on('--help', function () {
+// 优化help提示
+// 监听--help
+program.on('--help', () => {
   console.log()
   console.log(
     `Run ${chalk.cyan(
